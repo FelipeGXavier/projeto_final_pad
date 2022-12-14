@@ -12,6 +12,35 @@
 #include "parallelPrimeFactor.cpp"
 #include "sequentialPrimeFactor.cpp"
 
+std::vector <long long> factorization(long long number, std::vector <long long> &divisors) {
+	std::vector <long long> result;
+	for(auto divisor: divisors) {
+		// Não altera o produto
+		if(divisor == 1) {
+			continue;
+		}
+		// 2 4 5 10 20 25 50 100
+		// 2 2 5 5
+		while (number % divisor == 0) {
+			result.push_back(divisor);
+			number = number/divisor;
+		}
+	}
+	if(number != 1) {
+		result.push_back(number);
+	}
+	return result;
+}
+
+void printFactorization(long long number, std::vector <long long> &factors)
+{
+	std::cout << number << " = ";
+	for(int i = 0; i + 1 < factors.size(); i++) {
+		std::cout << factors[i] << " * ";
+	}
+	std::cout << factors.back() << "\n";
+}
+
 void printBenchmark(long long number) {
 	// Serial
 	std::chrono::steady_clock::time_point beginSequential = std::chrono::steady_clock::now();
@@ -26,14 +55,7 @@ void printBenchmark(long long number) {
 	std::cout << number << " | Seq. " << elapsedTimeSequential << " | Par. " << elapsedTimeParallel << "\n";
 }
 
-void printPrimeFactorization(long long number, std::vector <long long> &primeFactorsList)
-{
-	std::cout << number << " = ";
-	for(int i = 0; i + 1 < primeFactorsList.size(); i++) {
-		std::cout << primeFactorsList[i] << " * ";
-	}
-	std::cout << primeFactorsList.back() << "\n";
-}
+
 
 int main(int argc, char **argv)
 {
@@ -41,11 +63,16 @@ int main(int argc, char **argv)
 	std::string str;
 	std::vector<std::string> inputNumbers;
     while (std::getline(in, str)) {
-    	if(str.size() > 0) {
+    	if (str.size() > 0) {
 			inputNumbers.push_back(str);
 			const char * c = str.c_str();
 			long long number = atoll(c);
 			printBenchmark(number);
 		}
 	}
+	//Teste
+	// long long n = 100;
+	// std::vector <long long> primeFactorsList = sequentialPrimeFactor(n);
+	// std::vector <long long> result = factorization(n, primeFactorsList);
+	//printFactorization(n, result);
 }
